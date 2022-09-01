@@ -84,6 +84,10 @@ public class CustomerMapper {
             customer.setZipCode(content.getZipCode());
         }
 
+        if (content.getCity() != null) {
+            customer.setCity(content.getCity());
+        }
+
         if (content.getCountry() != null) {
             customer.setCountry(content.getCountry());
         }
