@@ -26,4 +26,14 @@ public class CustomerService implements ICustomerService {
     public Customer findById(Long id) {
         return repo.findById(id).orElseThrow(() -> new NotFoundException("Customer with id: " + id + " was not found"));
     }
+
+    @Override
+    public Customer save(Customer customer) {
+        return repo.save(customer);
+    }
+
+    @Override
+    public Customer update(Long id, Customer customer) {
+        return null;
+    }
 }
