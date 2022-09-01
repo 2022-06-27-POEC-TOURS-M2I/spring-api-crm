@@ -1,5 +1,6 @@
 package fr.m2i.apicrm.service;
 
+import fr.m2i.apicrm.exception.NotFoundException;
 import fr.m2i.apicrm.model.Customer;
 import fr.m2i.apicrm.repository.CustomerRepository;
 import java.util.List;
@@ -21,4 +22,8 @@ public class CustomerService implements ICustomerService {
         return repo.findAll();
     }
 
+    @Override
+    public Customer findById(Long id) {
+        return repo.findById(id).orElseThrow(() -> new NotFoundException("Customer with id: " + id + " was not found"));
+    }
 }
