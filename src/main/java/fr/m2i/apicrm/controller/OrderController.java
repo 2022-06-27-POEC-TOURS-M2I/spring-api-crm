@@ -48,7 +48,20 @@ public class OrderController {
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getOrderById(@PathVariable("id") String id) {
-        return null;
+        try {
+            Long orderId = Long.parseLong(id);
+            Order founded = orderService.findById(orderId);
+            OrderDTO dto = OrderMapper.buildOrderDTO(founded);
+
+            return ResponseEntity.status(HttpStatus.OK).body(dto);
+
+        } catch (NumberFormatException ne) {
+            return ErrorResponseEntity.build("The parameter 'id' is not valid", 400, "/v1/orders/" + id, HttpStatus.BAD_REQUEST);
+        } catch (NotFoundException nfe) {
+            return ErrorResponseEntity.build("Order was not found", 404, "/v1/orders/" + id, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return ErrorResponseEntity.build("An error occured", 500, "/v1/orders/" + id, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping(
@@ -96,6 +109,18 @@ public class OrderController {
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Object> deleteOrder(@PathVariable("id") String id) {
-        return null;
+        try {
+            Long orderId = Long.parseLong(id);
+            orderService.delete(orderId);
+
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
+        } catch (NumberFormatException ne) {
+            return ErrorResponseEntity.build("The parameter 'id' is not valid", 400, "/v1/orders/" + id, HttpStatus.BAD_REQUEST);
+        } catch (NotFoundException nfe) {
+            return ErrorResponseEntity.build("Order was not found", 404, "/v1/orders/" + id, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return ErrorResponseEntity.build("An error occured", 500, "/v1/orders/" + id, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
