@@ -2,6 +2,7 @@ package fr.m2i.apicrm.controller;
 
 import fr.m2i.apicrm.dto.OrderDTO;
 import fr.m2i.apicrm.dto.OrderMapper;
+import fr.m2i.apicrm.exception.NotFoundException;
 import fr.m2i.apicrm.model.Order;
 import fr.m2i.apicrm.response.ErrorResponseEntity;
 import fr.m2i.apicrm.service.IOrderService;
@@ -75,7 +76,22 @@ public class OrderController {
     )
     public ResponseEntity<Object> updateOrder(@PathVariable("id") String id,
             @RequestBody OrderDTO dto) {
-        return null;
+        
+        try {
+            Long orderId = Long.parseLong(id);
+            Order toUpdate = OrderMapper.buildOrder(dto);
+            Order updated = orderService.update(orderId, toUpdate);
+            OrderDTO updatedDTO = OrderMapper.buildOrderDTO(updated);
+
+            return ResponseEntity.status(HttpStatus.OK).body(updatedDTO);
+
+        } catch (NumberFormatException ne) {
+            return ErrorResponseEntity.build("The parameter 'id' is not valid", 400, "/v1/orders/" + id, HttpStatus.BAD_REQUEST);
+        } catch (NotFoundException nfe) {
+            return ErrorResponseEntity.build("Order was not found", 404, "/v1/orders/" + id, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return ErrorResponseEntity.build("An error occured", 500, "/v1/orders/" + id, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping(value = "/{id}")
